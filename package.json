@@ -1,0 +1,33 @@
+{
+  "name": "openapi-to-request",
+  "version": "0.0.1",
+  "description": "A CLI tool to generate TypeScript API clients from OpenAPI specifications",
+  "bin": {
+    "openapi-to-request": "./bin/openapi-format.js"
+  },
+  "type": "module",
+  "files": [
+    "bin",
+    "README.md"
+  ],
+  "scripts": {
+    "generate": "node ./bin/openapi-format.js"
+  },
+  "keywords": [
+    "openapi",
+    "swagger",
+    "typescript",
+    "api",
+    "generator",
+    "cli"
+  ],
+  "author": "lilonghe@outlook.com",
+  "license": "MIT",
+  "dependencies": {
+    "swagger-typescript-api": "^13.0.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
+}
