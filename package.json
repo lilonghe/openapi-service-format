@@ -1,6 +1,6 @@
 {
   "name": "openapi-to-request",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "A CLI tool to generate TypeScript API clients from OpenAPI specifications",
   "bin": {
     "openapi-to-request": "./bin/openapi-format.js"

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import path from "path";
 import { generateApi } from "swagger-typescript-api";
 import fs from "fs";
