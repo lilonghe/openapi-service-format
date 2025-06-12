@@ -3,6 +3,8 @@
 import path from "path";
 import { generateApi } from "swagger-typescript-api";
 import fs from "fs";
+import { cleanOpenAPISchema } from "./utils.js";
+
 
 async function loadConfig() {
   const configPath = path.resolve(process.cwd(), 'openapi.config.js');
@@ -18,7 +20,6 @@ async function generateApiService() {
     const config = await loadConfig();
     if (config.list) {
       for (const item of config.list) {
-        console.log(item)
         await generate(item);
       }
     } else {
@@ -37,18 +38,48 @@ async function generate(config) {
     const file = config.outputPath.split('/').pop();
     const outputPath = config.outputPath.replace(file, '');
 
+    // 读取并清理 OpenAPI 文件
+    const apiPath = path.resolve(process.cwd(), config.apiConfigPath);
+    let apiContent;
+    
+    try {
+      if (apiPath.endsWith('.json')) {
+        apiContent = JSON.parse(fs.readFileSync(apiPath, 'utf8'));
+      } else if (apiPath.endsWith('.yaml') || apiPath.endsWith('.yml')) {
+        const yaml = (await import('js-yaml')).default;
+        apiContent = yaml.load(fs.readFileSync(apiPath, 'utf8'));
+      } else {
+        throw new Error('Unsupported OpenAPI file format. Only JSON and YAML are supported.');
+      }
+    } catch (error) {
+      console.error('Error reading OpenAPI file:', error);
+      process.exit(1);
+    }
+
+    // 清理 schema
+    const cleanedContent = config.cleanup ? cleanOpenAPISchema(apiContent) : apiContent;
+
+    // 创建临时文件存储清理后的内容
+    const tempFile = path.join(process.cwd(), '.temp-openapi.json');
+    fs.writeFileSync(tempFile, JSON.stringify(cleanedContent, null, 2));
+
     await generateApi({
       ...config,
       fileName: file,
       output: path.resolve(process.cwd(), outputPath),
-      input: path.resolve(process.cwd(), config.apiConfigPath),
+      input: tempFile,
       httpClientType: config.client || "axios",
       unwrapResponseData: true,
     });
+
+    if (!config.debug) {
+      // 删除临时文件
+      fs.unlinkSync(tempFile);
+    }
   } catch (error) {
     console.error('Error generating API:', error);
     process.exit(1);
   }
 }
 
-generateApiService();
+generateApiService(); 

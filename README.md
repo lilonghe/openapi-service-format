@@ -42,6 +42,7 @@ openapi-to-request
 |------|------|------|--------|
 | apiConfigPath | string | OpenAPI/Swagger文档路径 | - |
 | outputPath | string | 生成文件保存路径 | - |
+| cleanup | bool | 是否自动清除非标准属性 | false |
 
 ## License
 
